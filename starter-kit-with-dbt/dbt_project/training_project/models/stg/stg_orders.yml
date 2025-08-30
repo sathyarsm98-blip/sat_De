@@ -1,0 +1,12 @@
+version: 2
+models:
+  - name: stg_orders
+    description: "Cleaned stage of raw.orders"
+    columns:
+      - name: order_id
+        tests:
+          - not_null
+          - unique
+      - name: order_ts
+        tests:
+          - not_null

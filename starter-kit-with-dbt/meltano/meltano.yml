@@ -1,0 +1,34 @@
+version: 1
+default_environment: dev
+environments:
+  - name: dev
+    config: {}
+
+plugins:
+  extractors:
+    - name: tap-csv
+      variant: meltanolabs
+      config:
+        files:
+          - entity: orders
+            path: ${PROJECT_ROOT}/data/sample_orders.csv
+            keys: [order_id]
+            delimiter: ","
+  loaders:
+    - name: target-postgres
+      variant: transferwise
+      config:
+        host: ${PGHOST or 'localhost'}
+        port: ${PGPORT or '5432'}
+        user: ${PGUSER or 'db_user'}
+        password: ${PGPASSWORD or 'db_pass'}
+        dbname: ${PGDATABASE or 'analytics'}
+        default_target_schema: raw
+        add_metadata_columns: false
+        batch_size_rows: 20000
+  utilities: []
+
+jobs:
+  - name: csv_to_postgres
+    tasks:
+      - tap-csv target-postgres
